@@ -1,3 +1,3 @@
 # JniDemo
 jni demo.
-plz note the git pull log.
+plz note the git push log.
