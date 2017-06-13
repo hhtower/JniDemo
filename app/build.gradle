@@ -10,19 +10,29 @@ android {
         versionCode 1
         versionName "1.0"
         testInstrumentationRunner "android.support.test.runner.AndroidJUnitRunner"
-
-        ndk {
-            moduleName "JniDemo"
-//            abiFilters "armeabi", "armeabi-v7a", "x86"  //输出指定三种abi体系结构下的so库。可有可无。
-            cFlags "-std=c++11" //c++版本
-            stl "gnustl_static" //支持 stl 标准库
-        }
     }
     buildTypes {
         release {
             minifyEnabled false
             proguardFiles getDefaultProguardFile('proguard-android.txt'), 'proguard-rules.pro'
         }
+    }
+
+    sourceSets {
+        main {
+            jni.srcDirs = []
+        }
+    }
+
+    task ndkBuild(type: Exec, description: 'Compile JNI source via NDK') {
+        commandLine "E:/adt-bundle-windows-x86_64-20140321/android-ndk-r10/ndk-build.cmd",
+                'NDK_PROJECT_PATH=build/intermediates/ndk',
+                'NDK_LIBS_OUT=src/main/jniLibs',
+                'APP_BUILD_SCRIPT=src/main/jni/Android.mk',
+                'NDK_APPLICATION_MK=src/main/jni/Application.mk'
+    }
+    tasks.withType(JavaCompile) {
+        compileTask -> compileTask.dependsOn ndkBuild
     }
 }
 
